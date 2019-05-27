@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>shitty lo fi ting</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="intro-wrap">
+    <img src="tenor.gif" alt="">
+  	<div class="noise"></div>
+  	<div class="noise noise-moving"></div>
+  	<div class="play" data-splitting>PLAY</div>
+  	<div class="time">--:--</div>
+  	<div class="recordSpeed">SLP 0:0<span class="min">0</span>:<span class="ten">0</span><span class="sec">0</span></div>
+  </div>
+
+  <script type="text/javascript">
+    console.clear();
+    // Splitting();
+
+    var songBuffer = null;
+    // Fix up prefixing
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+    function loadSound(url) {
+      var request = new XMLHttpRequest();
+      request.open('GET', url, true);
+      request.responseType = 'arraybuffer';
+
+      // Decode asynchronously
+      request.onload = function() {
+        context.decodeAudioData(request.response, function(buffer) {
+          songBuffer = buffer;
+        }, onError);
+      }
+      request.send();
+    }
+
+    function playSound(buffer, context) {
+      var source = context.createBufferSource(); // creates a sound source
+      source.buffer = buffer;                    // tell the source which sound to play
+      source.connect(context.destination);       // connect the source to the context's destination (the speakers)
+      source.start(0);                           // play the source now
+    }
+
+    // One-liner to resume playback when user interacted with the page.
+    document.body.addEventListener('click', function() {
+      // context.resume().then(() => {
+        var context = new AudioContext();
+        loadSound('ACC-6.wav')
+        playSound(songBuffer, context);
+        console.log('Playback resumed successfully');
+      // });
+    });
+
+    var min = 0;
+    var ten = 0;
+    var sec = 0;
+
+    setInterval(function() {
+      sec++
+
+      if (sec == 10) {
+        sec = 0;
+        ten++
+      }
+
+      if (ten == 6) {
+        ten = 0;
+        min++
+      }
+
+      document.querySelector('.min').textContent = String(min)
+      document.querySelector('.ten').textContent = String(ten)
+      document.querySelector('.sec').textContent = String(sec)
+
+
+    }, 1000);
+
+  </script>
+</body>
+</html><div class="scanlines"></div>
