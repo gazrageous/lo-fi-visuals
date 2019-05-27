@@ -18,15 +18,17 @@
   	<div class="recordSpeed">SLP 0:0<span class="min">0</span>:<span class="ten">0</span><span class="sec">0</span></div>
   </div>
 
+  <div class="scanlines"></div>
   <script type="text/javascript">
     console.clear();
     // Splitting();
 
     var songBuffer = null;
+    var playing;
     // Fix up prefixing
     window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-    function loadSound(url) {
+    function loadSound(url, context) {
       var request = new XMLHttpRequest();
       request.open('GET', url, true);
       request.responseType = 'arraybuffer';
@@ -35,9 +37,14 @@
       request.onload = function() {
         context.decodeAudioData(request.response, function(buffer) {
           songBuffer = buffer;
+          playSound(songBuffer, context);
         }, onError);
       }
       request.send();
+    }
+
+    function onError() {
+      console.log('error')
     }
 
     function playSound(buffer, context) {
@@ -47,15 +54,23 @@
       source.start(0);                           // play the source now
     }
 
+    function fireAudio() {
+      console.log('firingAudio')
+      if (playing) {
+        return
+      }
+
+      var context = new AudioContext();
+      loadSound('ACC-6.wav', context)
+      var playing = true;
+      console.log('Playback resumed successfully');
+      return playing
+    }
+
     // One-liner to resume playback when user interacted with the page.
-    document.body.addEventListener('click', function() {
-      // context.resume().then(() => {
-        var context = new AudioContext();
-        loadSound('ACC-6.wav')
-        playSound(songBuffer, context);
-        console.log('Playback resumed successfully');
-      // });
-    });
+    document.body.addEventListener('click', fireAudio);
+    document.body.click();
+    document.body.removeEventListener("click", fireAudio, true);
 
     var min = 0;
     var ten = 0;
@@ -83,4 +98,4 @@
 
   </script>
 </body>
-</html><div class="scanlines"></div>
+</html>
